@@ -50,7 +50,7 @@ Sums* SUM_BRUTE_FORCE (Key T[N]) {
   printf("%d\n", N);
   printf("%d\n", MAXPOS);
   while (pos != MAXPOS) {
-    printf("%d\n", pos);
+  //  printf("%d\n", pos);
     sumsVector[pos] = SUM (sumsVector[k], T, i);
     //print_key_char (sumsVector[pos].sum);
     pos++;
@@ -81,12 +81,32 @@ bool COMPARE (Key a, Sums b) {
   return TRUE;
 }
 
+// TESTA AI ;P
+// TENTATIVA DE TRANSFORMAR BINARIO PARA DECIMAL
+#include <math.h>
+int bin_to_dec(int* v, int i, int j) {
+  int dec = 0;
+  for (int k = j; k != i; k--) {
+    dec += (pow(2, (j-i))*v[k]);
+  }
+  return dec;
+}
+
 // IMPRIME A POSSÍVEL SENHA
 void PRINT (Sums a) {
+  int v[N] = {0};
+  for (int i = 0; i < a.lastline; i++) {
+    v[a.lines[i]] = 1;
+  }
+  Key possible = {{0}};
+  for (int i = 0; i < C; i++) {
+    possible.digit[i] = bin_to_dec(v, i*4, (i*4)+4);
+  }
+  /*
   Key possible = {{0}};
   for (int i = 0; i < a.lastline; i++) {
     possible.digit[a.lines[i]] = 1;
-  }
+  }*/
   print_key(possible);
 
   print_key_char (possible);
