@@ -5,13 +5,15 @@
 #include "key.h"
 #include "brute.h"
 
+// STRUCT PARA TODAS AS POSSÍVEIS SOMAS
 struct sums {
-  int lines[N];
-  int lastline;
-  Key sum;
+  int lines[N]; // REPOSITORIO PARA AS LINHAS SOMADAS
+  int lastline; // INDICE A ÚLTIMA POSIÇÃO DE LINES
+  Key sum; // KEY COM A SOMA
 };
 
-// INICIALIZA UMA POSIÇÃO DO VETOR DE SOMAS.
+// INICIALIZA UMA POSIÇÃO DO VETOR DE SOMAS
+// SENDO ESTA A POSIÇÃO SOLITÁRIA (A LINHA NÃO SOMADA COM OUTRA)
 Sums VALUE (Key T[N], int i) {
   Sums x;
   x.sum = T[i];
@@ -20,40 +22,48 @@ Sums VALUE (Key T[N], int i) {
   return x;
 }
 
-// FAZ A SOMA DE X COM O VALOR NA TABELA T NO ÍNDICE I, ALÉM DE ACRESCER A LASTLINE E TAMBÉM INSERE A LINHA
+// FAZ A SOMA DE X COM O VALOR NA TABELA T NO ÍNDICE I (QUE É UMA LINHA)
+// ACRESCE O VALOR DE LASTLINE E INSERE A LINHA NO REPOSITORIO DE LINHAS SOMADAS
 Sums SUM (Sums X, Key T[N], int i) {
-  Sums Y = X;
-  Y.sum = add (Y.sum , T[i]);
-  Y.lastline++;
+  X.sum = add (X.sum , T[i]);
+  X.lastline++;
 //  printf("Lines: ");
 //  for (int k = 0; k < Y.lastline; k++) {
 //    printf("%2d  ", Y.lines[k]);
 //  }
-  Y.lines[Y.lastline] = i;
+  X.lines[X.lastline] = i;
 //  printf("Line: %2d\n", i);
-  return Y;
-}
+  return X;
+} // RETIRAR O PRINT DEPOIS, ELE SERVE PARA VER AS COMBINAÇÕES DE SOMAS :P RETIRAR TBM EM SUM BRUTE FORCE
 
-// RETORNA A PRIMEIRA LINHA
+// RETORNA A PRIMEIRA LINHA (INDICE DE T)
 int FIRSTLINE (Sums sum) {
   return sum.lines[0];
 }
 
-// RETORNA A ÚLTIMA LINHA
+// RETORNA A ÚLTIMA LINHA (INDICE DE T)
 int LASTLINE (Sums sum) {
   return sum.lines[sum.lastline];
 }
 
 // FAZ TODAS AS POSSÍVEIS COMBINAÇÕES DE SOMAS E AS ARMAZENA EM 'sumsVector'
 Sums* SUM_BRUTE_FORCE (Key T[N]) {
+  // ALOCAÇÃO DO VETOR COM AS SOMAS
   Sums* sumsVector = malloc (MAXPOS * sizeof * sumsVector);
+
+  // INICIALIZAÇÃO DOS VALORES SOLITARIOS (QUE NÃO SÃO SOMADOS)
   for (int i = 0; i < MAXLINE; i++) {
     sumsVector[i] = VALUE (T, i);
+    //printf("Lines: %2d\n, i); // TIRA AQ E EM SUMS SE QUISER VER AS COMBINAÇÔES
     //print_key_char(sumsVector[i].sum);
   }
+
+  // INICIALIZAÇÃO DAS VARIÁVEIS AUXILIARES
   int k = 0;
   int pos = MAXLINE;
   int i = 1;
+
+  // LOOP PARA A SOMA
   while (pos < MAXPOS) {
     sumsVector[pos] = SUM (sumsVector[k], T, i);
     pos++;
@@ -67,43 +77,18 @@ Sums* SUM_BRUTE_FORCE (Key T[N]) {
 
   return sumsVector;
 }
-/* FAIL
-Sums* SUM_BRUTE_FORCE (Key T[N]) {
-  Sums* sumsVector = malloc (MAXPOS * sizeof * sumsVector);
-
-  sumsVector[0] = VALUE (T, 0);
-  int k = 0;
-  int pos = 1;
-  int i = 1;
-  while (pos < MAXPOS) {
-    sumsVector[pos] = SUM (sumsVector[k], T, i);
-    pos++;
-    i++;
-    if (i == MAXLINE) {
-      k++;
-      i = LASTLINE (sumsVector[k]);
-      if (i >= MAXLINE) {
-        sumsVector[pos] = VALUE (T, FIRSTLINE (sumsVector[pos-1]));
-        k = pos;
-        pos++;
-        i  = LASTLINE (sumsVector[k]);
-      }
-    }
-  }
-
-  return sumsVector;
-}
-*/
 
 // COMPARA DUAS KEYS, RETORNANDO TRUE SE IGUAIS OU FALSE SE DIFERENTES
 bool COMPARE (Key a, Sums b) {
   int breaked = 0;
+
   for (int i = 0; i < C; i++) {
-    if(a.digit[i] != b.sum.digit[i]) {
+    if (a.digit[i] != b.sum.digit[i]) {
       breaked = 1;
       break;
     }
   }
+
   if (breaked) {
     return FALSE;
   } else {
@@ -112,26 +97,33 @@ bool COMPARE (Key a, Sums b) {
 }
 
 // TRANSFORMA UM VETOR DA POSIÇÃO I ATÉ A POSIÇÃO J EM UM NÚMERO DECIMAL
-int bin_to_dec (int* v, int i, int j) {
+int BIN_TO_DEC (int* v, int i, int j) {
   int dec = 0;
   for (int k = j; k >= i; k--) {
-    dec += (pow(2, (j-k))*v[k]);
+    dec += (pow (2, (j-k)) * v[k]);
   }
+
   return dec;
 }
 
 // IMPRIME A POSSÍVEL SENHA
 void PRINT (Sums a) {
   int E = B-1; // ESPAÇO DE POSIÇÕES ENTRE BITS A SEREM TRANSFORMADOS EM DECIMAL
-  int v[N] = {0};
+
+  int v[N] = {0}; // VETOR "BINÁRIO" INICIALIZADO TOTALMENTE COM ZEROS
+  // FOR PARA CRIAÇÃO DO "NÚMERO BINÁRIO" NO VETOR
+  // CASO A LINHA X TENHA SIDO SOMADA, A SUA POSIÇÃO NO VETOR SERÁ UM
   for (int i = 0; i <= a.lastline; i++) {
     v[a.lines[i]] = 1;
   }
+
+  // TRANSFORMAÇÃO DO "NÚMERO BINÁRIO" EM DECIMAL
   Key possible = {{0}};
   for (int i = 0; i < C; i++) {
     int intervalo = (i*E)+i;
-    possible.digit[i] = bin_to_dec(v, intervalo, intervalo+E);
+    possible.digit[i] = BIN_TO_DEC (v, intervalo, intervalo+E);
   }
+
   print_key_char (possible);
 }
 
@@ -147,15 +139,20 @@ void COMPARE_AND_PRINT (Key crypt, Sums* sumsVector) {
 int main (int argc, char *argv[]) {
   Key cript = init_key ((unsigned char *) argv[1]);
   Key T[N];
-  //reaproveitamento de código
+
+  // REUSO DE CÓDIGO
   unsigned char buffer[C+1];
   for (int i = 0; i < N; i++) {
     scanf ("%s", buffer);
     T[i] = init_key (buffer);
   }
+
+  // FAZ TODAS AS POSSÍVEIS SOMAS
   Sums* sumsVector = SUM_BRUTE_FORCE(T);
+  // COMPARA E IMPRIME
   COMPARE_AND_PRINT (cript, sumsVector);
 
+  // LIBERAÇÃO DE MEMÓRIA ALOCADA
   free (sumsVector);
 
   return 0;

@@ -8,7 +8,7 @@ enc:
 brute:
 	gcc key.c brute.c -lm -o brute -g
 
-desc:
+desc: #AINDA NÃO IMPLEMENTADO
 	gcc key.c descrypt.c -o descrypt -g
 
 clean:
