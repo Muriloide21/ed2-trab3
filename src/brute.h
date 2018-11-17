@@ -3,6 +3,7 @@
 
 #include "key.h"
 #include <math.h>
+
 // TYPEDEF PARA STRUCT SUMS
 typedef struct sums Sums;
 
@@ -30,6 +31,9 @@ Sums* SUM_BRUTE_FORCE (Key T[N]);
 
 // COMPARA DUAS KEYS, RETORNANDO TRUE SE IGUAIS OU FALSE SE DIFERENTES
 bool COMPARE (Key a, Sums b);
+
+// TRANSFORMA UM VETOR DA POSIÇÃO I ATÉ A POSIÇÃO J EM UM NÚMERO DECIMAL
+int bin_to_dec (int* v, int i, int j);
 
 // IMPRIME A POSSÍVEL SENHA
 void PRINT (Sums a);

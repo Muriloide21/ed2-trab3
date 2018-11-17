@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 #include "key.h"
 #include "brute.h"
 
@@ -21,10 +22,16 @@ Sums VALUE (Key T[N], int i) {
 
 // FAZ A SOMA DE X COM O VALOR NA TABELA T NO ÍNDICE I, ALÉM DE ACRESCER A LASTLINE E TAMBÉM INSERE A LINHA
 Sums SUM (Sums X, Key T[N], int i) {
-  X.sum = add (X.sum , T[i]);
-  X.lastline++;
-  X.lines[X.lastline] = i;
-  return X;
+  Sums Y = X;
+  Y.sum = add (Y.sum , T[i]);
+  Y.lastline++;
+//  printf("Lines: ");
+//  for (int k = 0; k < Y.lastline; k++) {
+//    printf("%2d  ", Y.lines[k]);
+//  }
+  Y.lines[Y.lastline] = i;
+//  printf("Line: %2d\n", i);
+  return Y;
 }
 
 // RETORNA A PRIMEIRA LINHA
@@ -39,26 +46,43 @@ int LASTLINE (Sums sum) {
 
 // FAZ TODAS AS POSSÍVEIS COMBINAÇÕES DE SOMAS E AS ARMAZENA EM 'sumsVector'
 Sums* SUM_BRUTE_FORCE (Key T[N]) {
-  //Sums* sumsVector = malloc (MAXPOS * sizeof(Sums*));
+  Sums* sumsVector = malloc (MAXPOS * sizeof * sumsVector);
+  for (int i = 0; i < MAXLINE; i++) {
+    sumsVector[i] = VALUE (T, i);
+    //print_key_char(sumsVector[i].sum);
+  }
+  int k = 0;
+  int pos = MAXLINE;
+  int i = 1;
+  while (pos < MAXPOS) {
+    sumsVector[pos] = SUM (sumsVector[k], T, i);
+    pos++;
+    i++;
+    while (i == MAXLINE) {
+      k++;
+      i = LASTLINE (sumsVector[k]);
+      i++;
+    }
+  }
+
+  return sumsVector;
+}
+/* FAIL
+Sums* SUM_BRUTE_FORCE (Key T[N]) {
   Sums* sumsVector = malloc (MAXPOS * sizeof * sumsVector);
 
   sumsVector[0] = VALUE (T, 0);
-  //print_key_char (sumsVector[0].sum);
   int k = 0;
   int pos = 1;
   int i = 1;
-  printf("%d\n", N);
-  printf("%d\n", MAXPOS);
-  while (pos != MAXPOS) {
-  //  printf("%d\n", pos);
+  while (pos < MAXPOS) {
     sumsVector[pos] = SUM (sumsVector[k], T, i);
-    //print_key_char (sumsVector[pos].sum);
     pos++;
     i++;
     if (i == MAXLINE) {
       k++;
       i = LASTLINE (sumsVector[k]);
-      if (i == MAXLINE) {
+      if (i >= MAXLINE) {
         sumsVector[pos] = VALUE (T, FIRSTLINE (sumsVector[pos-1]));
         k = pos;
         pos++;
@@ -69,66 +93,65 @@ Sums* SUM_BRUTE_FORCE (Key T[N]) {
 
   return sumsVector;
 }
+*/
 
 // COMPARA DUAS KEYS, RETORNANDO TRUE SE IGUAIS OU FALSE SE DIFERENTES
 bool COMPARE (Key a, Sums b) {
-  //print_key_char (a); printf(" - "); print_key_char(b.sum);printf("\n");
+  int breaked = 0;
   for (int i = 0; i < C; i++) {
     if(a.digit[i] != b.sum.digit[i]) {
-      return FALSE;
+      breaked = 1;
+      break;
     }
   }
-  return TRUE;
+  if (breaked) {
+    return FALSE;
+  } else {
+    return TRUE;
+  }
 }
 
-// TESTA AI ;P
-// TENTATIVA DE TRANSFORMAR BINARIO PARA DECIMAL
-#include <math.h>
-int bin_to_dec(int* v, int i, int j) {
+// TRANSFORMA UM VETOR DA POSIÇÃO I ATÉ A POSIÇÃO J EM UM NÚMERO DECIMAL
+int bin_to_dec (int* v, int i, int j) {
   int dec = 0;
-  for (int k = j; k != i; k--) {
-    dec += (pow(2, (j-i))*v[k]);
+  for (int k = j; k >= i; k--) {
+    dec += (pow(2, (j-k))*v[k]);
   }
   return dec;
 }
 
 // IMPRIME A POSSÍVEL SENHA
 void PRINT (Sums a) {
+  int E = B-1; // ESPAÇO DE POSIÇÕES ENTRE BITS A SEREM TRANSFORMADOS EM DECIMAL
   int v[N] = {0};
-  for (int i = 0; i < a.lastline; i++) {
+  for (int i = 0; i <= a.lastline; i++) {
     v[a.lines[i]] = 1;
   }
   Key possible = {{0}};
   for (int i = 0; i < C; i++) {
-    possible.digit[i] = bin_to_dec(v, i*4, (i*4)+4);
+    int intervalo = (i*E)+i;
+    possible.digit[i] = bin_to_dec(v, intervalo, intervalo+E);
   }
-  /*
-  Key possible = {{0}};
-  for (int i = 0; i < a.lastline; i++) {
-    possible.digit[a.lines[i]] = 1;
-  }*/
-  print_key(possible);
-
   print_key_char (possible);
 }
 
 // FAZ A COMPARAÇÃO DE TODAS AS POSSÍVEIS SENHAS E AS IMPRIME
 void COMPARE_AND_PRINT (Key crypt, Sums* sumsVector) {
   for (int i = 0; i < MAXPOS; i++) {
-    if(COMPARE(crypt, sumsVector[i])){
+    if (COMPARE (crypt, sumsVector[i])) {
       PRINT(sumsVector[i]);
     }
   }
 }
 
 int main (int argc, char *argv[]) {
-  Key cript = init_key((unsigned char *) argv[1]);
+  Key cript = init_key ((unsigned char *) argv[1]);
   Key T[N];
   //reaproveitamento de código
   unsigned char buffer[C+1];
   for (int i = 0; i < N; i++) {
     scanf ("%s", buffer);
-    T[i] = init_key(buffer);
+    T[i] = init_key (buffer);
   }
   Sums* sumsVector = SUM_BRUTE_FORCE(T);
   COMPARE_AND_PRINT (cript, sumsVector);
