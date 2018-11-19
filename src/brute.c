@@ -69,7 +69,7 @@ Sums* SUM_BRUTE_FORCE (Key T[N]) {
     pos++;
     i++;
     while (i == MAXLINE) {
-      k++;
+      k++; if (k == pos) { break; }
       i = LASTLINE (sumsVector[k]);
       i++;
     }
