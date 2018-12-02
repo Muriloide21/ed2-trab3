@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include <math.h>
 #include "key.h"
 #include "brute.h"
@@ -19,6 +20,10 @@ bool IS_EQUAL (Key a, Key b) {
 
 
 int main (int argc, char *argv[]) {
+  clock_t start, stop;
+  start = clock();
+
+
   Key cript = init_key ((unsigned char *) argv[1]);
   Key T[N];
 
@@ -55,6 +60,12 @@ int main (int argc, char *argv[]) {
 		actualTest = add(actualTest, increment);
 		i++;
 	}
+
+
+
+  stop = clock();
+  double time_taken = ((double) stop - start) / CLOCKS_PER_SEC;
+  printf("\nElapsed time: %.3f\n", time_taken);
 
 	return 0;
 }
