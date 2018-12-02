@@ -1,6 +1,7 @@
 all:
 	gcc -Wall key.c encrypt.c -o encrypt
 	gcc key.c brute.c -lm -o brute -g
+	gcc key.c simbolos.c -lm -o decrypt -g
 
 enc:
 	gcc -Wall key.c encrypt.c -o encrypt
