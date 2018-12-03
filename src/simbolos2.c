@@ -100,7 +100,8 @@ int main (int argc, char *argv[]) {
 
   // FUNCIONAL
   int u = C-1;
-  while (NOT_FINALIZED (vetorIndices)) {
+  int FINALIZED = 0;
+  while (FINALIZED == 0) {
     Key testCrypted = {{0}};
     for (int j = 0; j < C; j++) {
       testCrypted = add (testCrypted, symbolTable[j][vetorIndices[j]]);
@@ -113,30 +114,27 @@ int main (int argc, char *argv[]) {
     }
     vetorIndices[u]++;
     while (vetorIndices[u] == 32) {
-      /*testCrypted = sub (testCrypted, symbolTable[u][31]);
-      testCrypted = add (testCrypted, symbolTable[u][0]);*/
+      // testCrypted = sub (testCrypted, symbolTable[u][31]);
+      // testCrypted = add (testCrypted, symbolTable[u][0]);
       vetorIndices[u] = 0;
       u--;
       vetorIndices[u]++;
     }
+    if (!NOT_FINALIZED (vetorIndices)) {
+      FINALIZED = 1;
+    }
     u = C-1;
   }
 
-  /*
-  TENTANDO ARRUMAR ISSO
-  SE ABRIR AQUI E VER E CONSEGUIR ARRUMAR, GOD :D
-
+/*
   int u = C-1;
-  for (int j = 0; j < C; j++) {
-    testCrypted = add (testCrypted, symbolTable[j][vetorIndices[j]]);
+  for (int i = 0; i < C; i++) {
+    testCrypted = add (testCrypted, symbolTable[i][vetorIndices[i]]);
   }
-  print_key_char(symbolTable[u][1]);
-
-  while (NOT_FINALIZED (vetorIndices)) {
-    //Key testCrypted = {{0}};
-    print_key_char(symbolTable[u][vetorIndices[u]]);
-
+  int FINALIZED = 0;
+  while (FINALIZED == 0) {
     testCrypted = add (testCrypted, symbolTable[u][vetorIndices[u]]);
+
     if (IS_EQUAL(crypted, testCrypted)) {
       for (int k = 0; k < C; k++) {
         printf("%c", ALPHABET[vetorIndices[k]]);
@@ -148,20 +146,19 @@ int main (int argc, char *argv[]) {
     vetorIndices[u]++;
     while (vetorIndices[u] == 32) {
       vetorIndices[u] = 0;
-      u = u - 1;
-      // print_key_char(testCrypted);
-      // print_key_char(symbolTable[u][vetorIndices[u]]);
+      u--;
       testCrypted = sub (testCrypted, symbolTable[u][vetorIndices[u]]);
-      // print_key_char(testCrypted);
-      // printf("\n");
       vetorIndices[u]++;
       if (vetorIndices[u] != 32) {
         testCrypted = add (testCrypted, symbolTable[u][vetorIndices[u]]);
       }
     }
+    if (!NOT_FINALIZED (vetorIndices)) {
+      FINALIZED = 1;
+    }
     u = C-1;
   }
-  */
+*/
   for (int i = 0; i < C; i++) {
     free (symbolTable[i]);
   }
