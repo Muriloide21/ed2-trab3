@@ -10,8 +10,8 @@ enc:
 brute:
 	gcc key.c brute.c -lm -o brute -g
 
-desc: #AINDA NÃO IMPLEMENTADO
-	gcc key.c descrypt.c -o descrypt -g
+dec: #AINDA NÃO IMPLEMENTADO
+	gcc key.c decrypt.c -o descrypt -g
 
 clean:
 	rm -f *.o a.out encrypt gmon.out prof
