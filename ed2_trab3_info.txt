@@ -1,0 +1,149 @@
+/******************************************************************************
+ *  Relatório do Trabalho 3 -- ED2 -- 2018/2
+ *  Password Cracking
+ *****************************************************************************/
+
+Nome 1: Jordan Gonçalves Pereira
+Nome 2: Murilo Ferri Schirmer
+SO utilizado: Linux (Ubuntu)
+Versão do compilador utilizado: 5.4.0 e 14.08.0 GCC
+Editor(es) de código utilizado(s): Visual Studio Code e Atom;
+Número de horas gastas para fazer o trabalho (aproximado): 10 horas
+
+/******************************************************************************
+ *  Se você usou o arquivo key.c, descreva qualquer modificação/otimização que
+ *  você tenha feito no código. Se você não utilizou key.c, descreva a
+ *  estrutura de dados que você utilizou para manipular as senhas.
+ *****************************************************************************/
+O arquivo key.c não foi modificado de forma a alterar o funcionamento de suas
+funções principais. A única modificação foi comentar 2 linhas de código para não
+imprimir as linhas da tabela utilizadas.
+
+/******************************************************************************
+ *  Descreva a sua solução força bruta (brute.c) .
+ *****************************************************************************/
+Primeiramente, inicializamos uma string de tamanho C apenas com caracteres 'a
+e outra da mesma forma, porém com um único 'b' no final. Depois as keys com essas
+strings são geradas (keyAtual e keyIncrement). Inicia-se um loop de 0 até o número
+máximo de combinações de keys, onde realizamos a encriptação da keyAtual e a
+comparamos (utilizando a função IS_EQUAL) com a chave encriptada passada como
+argumento, em seguida keyAtual é incrementada utilizando a keyIncrement com a
+função add, fornecida no arquivo key.c.
+
+Caso IS_EQUAL retorne "true", keyAtual será printada na saída padrão.
+
+
+/******************************************************************************
+ *  Faça uma descrição de alto nível do seu programa de quebra de senha
+ *  (decrypt.c).
+ *****************************************************************************/
+
+    Primeiramente, é criada uma matriz de C x R, onde é colocada todas as possibi-
+ lidades de keys, onde na letra de ordem referente ao intervalo [0, C-1], o carac-
+ ter muda, indo de [0, R-1] de ALPHABET.
+    Depois disso, toda a matriz é criptografada e a senha criptografada é armazenada
+ na mesma posição da Matriz.
+    É criado um vetor de índices inicialmente todo de zero, que será modificado a
+ cada passo do loop de somas.
+    Depois disso, começará um loop que fará todas as somas possíveis da matriz.
+    Todas as somas são armazenadas numa Key de Testes. Depois da soma, a Key de Testes
+ é comparada com a Key fornecida na entrada com a função IS_EQUAL e, caso seja,
+ irá printar as letras referentes aos índices que estão armazenadas no vetor de
+ índices. Esses índices refletem em uma possível senha que foi criptografada para
+ a Key passada como argumento.
+
+    Houve uma tentativa de um código, que segue comentado junto a implementação
+ acima, que seria a mesma idéia, mas diversificando o fato de que seria mantida
+ bases de somas anteriores para continuidade das combinações de somas usando uma
+ função de subtração.
+
+/******************************************************************************
+ *  Descreva a implementação da tabela de símbolos que você utilizou em
+ *  decrypt.c .
+ *****************************************************************************/
+    Foi utilizada uma matriz C x R para armazenar chaves encriptadas com todos os
+ caracteres de ALPHABET em diferentes posições. Assim, realizando somas entre eles.
+
+/******************************************************************************
+ *  Liste abaixo as versões não criptografadas das senhas fornecidas na
+ *  especificação do trabalho. Faça isso SOMENTE se você foi capaz de quebrar
+ *  as senhas usando o SEU código.
+ *****************************************************************************/
+
+8 caracteres         10 caracteres          12 caracteres
+------------         -------------          -------------
+
+
+/******************************************************************************
+ *  Quanto tempo a versão força bruta leva para quebrar as senhas de um dado
+ *  tamanho? Forneça estimativas com um asterisco se o programa levar mais do
+ *  que a sua paciência (por exemplo, um ou dois minutos). Justifique as suas
+ *  estimativas.
+ *****************************************************************************/
+
+Tamanho     Tempo (segundos)
+----------------------------
+ 4                0.2
+ 5                7.1
+ 6                279.818
+ 8                20000* (Número estimado baseado em chute)
+
+/******************************************************************************
+ *  Quanto tempo decrypt.c leva para quebrar as senhas de um dado tamanho?
+ *  Quanto de memória o programa utiliza? Forneça estimativas com um asterisco
+ *  se o programa levar mais que a sua paciência ou utilizar mais memória que
+ *  o seu sistema possui. Justifique as suas estimativas.
+ *****************************************************************************/
+
+Tamanho    Tempo (segundos)    Memória (bytes)
+----------------------------------------------
+ 6              140                6320
+ 8              5000*              9400*
+10              5000*              11680*
+12              5000*              14550*
+
+Nota:   - As estimativas de tempo foram baseadas no tempo máximo que esperamos
+        pelo resultado.
+        - Os valores máximos de memória estão representados com o asterisco.
+/******************************************************************************
+ *  Quantas operações brute.c faz sobre uma senha com N bits?
+ *  Quantas operações decrypt.c faz sobre uma senha com N bits?
+ *  Utilize a notação de big-Oh nas suas respostas.
+ *****************************************************************************/
+brute.c: O(N*(R^C)) operações;
+decrypt.c: O(C*N*(R^C+1)) operações;
+
+Note que decrypt faz mais operações, porém economiza muito tempo ao não fazer a
+encriptação várias vezes.
+
+/******************************************************************************
+ *  Descreva qualquer problema grave que você encontrou ao desenvolver
+ *  o trabalho.
+ *****************************************************************************/
+Todas as ideias iniciais utilizam memória de forma exponencial em relação ao
+número de caracteres.
+
+
+/******************************************************************************
+ *  Deixe qualquer outro comentário aqui. Fique à vontade para dar um feedback
+ *  sobre o quanto você acha que aprendeu com esse trabalho, e se você gostou
+ *  de fazê-lo.
+ *****************************************************************************/
+Murilo: O trabalho foi bem desafiador e empolgante ao mesmo tempo. Apesar de não
+        termos conseguido implementar o método com a tabela de símbolos corretamente,
+        pudemos estudar muito sobre a grande variedade de métodos/estruturas
+        existentes para resolver o mesmo problema. Já abusando um pouco da
+        liberdade de comentário, foi um enorme prazer aprender essa disciplina como
+        um todo (não apenas esse trabalho).
+Jordan: A implementação de um problema desse tipo, NP-Complete, foi um bom desafio,
+        mas por causa do fim de período, a quantidade de provas e outras coisas
+        para finalizar as notas em outras disciplinas inviabilizou qualquer tipo
+        de implementação mais fluída do problema, visto que, por ser NP-Complete,
+        você não consegue uma boa implementação, pois você teria que usar um
+        número exponencial de memória, como foi em nossas primeiras tentativas
+        de implementação. Para criar um programa funcional, tivemos que abrir mão
+        de uma grande parte da agilidade do programa, assim reduzindo o consumo
+        de memória.
+        Foi um excelente trabalho, não conseguimos implementá-lo em tempo hábil
+        devido as outras matérias mas, tentarei implementa-lo da melhor forma
+        possível nas ferías.

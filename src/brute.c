@@ -34,11 +34,6 @@ int main (int argc, char *argv[]) {
     T[i] = init_key (buffer);
   }
 
-  /* SÓ FUNCIONA PARA C = 5
-  unsigned char initialTest[C] = "aaaaa";
-  unsigned char incrementTest[C] = "aaaab";
-  */
-
   // GERA AS STRINGS PARA TESTE INICIAL (TUDO 'A') E A STRING PARA INCREMENTO (TUDO 'A', EXCETO A ÚLTIMA QUE É 'B')
   unsigned char initialTest[C];
   unsigned char incrementTest[C];
